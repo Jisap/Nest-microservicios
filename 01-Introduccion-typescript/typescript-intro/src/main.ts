@@ -1,11 +1,14 @@
 import './style.css'
-//import typescriptLogo from './typescript.svg'
-//import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
-import { templateString } from '../bases/01-type';
+
+import { name, templateString } from '../bases/01-type';
 
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = templateString
+const app = document.querySelector<HTMLDivElement>('#app')!;
+
+app.innerHTML = `
+  <h1>Hello ${ name }</h1>
+  </br>
+  ${templateString}
+`
 
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
