@@ -4,7 +4,7 @@ import { Move, PokeapiReponse } from '../interfaces/pokeapi-response.interface';
 export class Pokemon {
 
   get imageUrl(): string {
-    return `https://pokemon.com/${this.id}.jpg`;
+    return `https://pokemon.com/${this.id}.jpg`; // this apunta a la instancia
   }
 
   constructor(
