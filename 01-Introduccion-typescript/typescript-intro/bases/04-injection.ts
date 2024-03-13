@@ -10,9 +10,8 @@ export class Pokemon {
   constructor(
     public readonly id: number,
     public name: string,
-    // Todo: inyectar dependencias
-    private readonly http: HttpAdapter, // Inyección del patron adaptador para peticiones a urls
-  ) { }
+    private readonly http: HttpAdapter, // Inyección del patron adaptador para peticiones a urls que puede ser cualquier implementación valida de HttpAdapter
+  ) { }                                 // Viene a ser como un esquema o clase abstracta sin implementar
 
   scream() {
     console.log(`${this.name.toUpperCase()}!!!`);
@@ -33,9 +32,9 @@ export class Pokemon {
 }
 
 // Instancia del patron adaptador a usar
-// en HttpAdapter
+// en HttpAdapter. Aquí definimos si usamos,
 const pokeApiAxios = new PokeApiAdapter();        // patron axios
-const pokeApiFetch = new PokeApiFetchAdapter();   // patron http
+const pokeApiFetch = new PokeApiFetchAdapter();   // o el patron http
 
 export const charmander = new Pokemon(4, 'Charmander', pokeApiAxios); // Instancia del pokemon 4 con el patron axios
 
