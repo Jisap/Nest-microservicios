@@ -2,7 +2,8 @@ import './style.css'
 
 //import { name, templateString } from '../bases/01-type';
 //import { charmander, bulbasaur, pokemons } from '../bases/02-objects';
-import { charmander } from '../bases/03-classes'
+//import { charmander } from '../bases/03-classes'
+import { charmander } from '../bases/04-injection';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
