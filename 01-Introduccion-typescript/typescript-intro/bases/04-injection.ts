@@ -22,9 +22,8 @@ export class Pokemon {
     console.log(`${this.name}, ${this.name}`);
   }
 
-  async getMoves(): Promise<Move[]> {
-    // const { data } = await axios.get<PokeapiReponse>('https://pokeapi.co/api/v2/pokemon/4'); // Con patron axios
-    const data = await this.http.get<PokeapiReponse>('https://pokeapi.co/api/v2/pokemon/4');    // Con patron http
+  async getMoves(): Promise<Move[]> { 
+    const data = await this.http.get<PokeapiReponse>('https://pokeapi.co/api/v2/pokemon/4');    
     console.log(data.moves);
 
 
@@ -33,10 +32,12 @@ export class Pokemon {
 
 }
 
-const pokeApiAxios = new PokeApiAdapter();
-const pokeApiFetch = new PokeApiFetchAdapter();
+// Instancia del patron adaptador a usar
+// en HttpAdapter
+const pokeApiAxios = new PokeApiAdapter();        // patron axios
+const pokeApiFetch = new PokeApiFetchAdapter();   // patron http
 
-export const charmander = new Pokemon(4, 'Charmander', pokeApiAxios);
+export const charmander = new Pokemon(4, 'Charmander', pokeApiAxios); // Instancia del pokemon 4 con el patron axios
 
 
 charmander.getMoves();
