@@ -8,7 +8,6 @@ export interface HttpAdapter {
 }
 
 
-
 export class PokeApiFetchAdapter implements HttpAdapter { // Esta clase implementa la interfaz httpAdapter
 
   async get<T>(url: string): Promise<T> { // En su método get
