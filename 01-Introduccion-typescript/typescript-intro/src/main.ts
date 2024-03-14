@@ -3,7 +3,8 @@ import './style.css'
 //import { name, templateString } from '../bases/01-type';
 //import { charmander, bulbasaur, pokemons } from '../bases/02-objects';
 //import { charmander } from '../bases/03-classes'
-import { charmander } from '../bases/04-injection';
+//import { charmander } from '../bases/04-injection';
+import { charmander } from '../bases/05-decorators';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
@@ -21,7 +22,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 //   <h1>Hello ${bulbasaur.name} ${bulbasaur.id}</h1>
 // `;
 
-// 03 classes
+// 03 classes // 04 injections
 app.innerHTML = `
   <h1>Hello ${charmander.name} ${charmander.id}!</h1>
 `;
