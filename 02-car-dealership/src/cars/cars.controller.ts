@@ -24,7 +24,9 @@ export class CarsController {
   }
 
   @Patch(':id')
-  updateCar(@Body() body: any) {
+  updateCar(
+    @Param('id', ParseIntPipe) id:number,
+    @Body() body: any) {
     return body
   }
 
