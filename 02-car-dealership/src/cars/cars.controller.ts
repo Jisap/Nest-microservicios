@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, ParseUUIDPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
 
 @Controller('cars')                   // Escucha las peticiones (a localhost:3000/cars) de los clientes (postman), y emite una respuesta
 export class CarsController {
@@ -19,8 +20,9 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Body() body:any){
-    return body
+  
+  createCar(@Body() createCarDto:CreateCarDto){
+    return createCarDto;
   }
 
   @Patch(':id')
