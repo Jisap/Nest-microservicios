@@ -69,4 +69,9 @@ export class CarsService {
     return carDB; // Finalmente, la función devuelve el objeto carDB, que representa el automóvil actualizado en la base de datos.
   }
 
+  delete(id: string) {
+    const car = this.findOneById(id);
+    this.cars = this.cars.filter(car => car.id !== id);
+  }
+
 }
