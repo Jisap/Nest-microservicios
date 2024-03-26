@@ -11,16 +11,16 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
 
     ConfigModule.forRoot({
-      load: [EnvConfiguration]
+      load: [EnvConfiguration]                    // Permite cargar las variables de entorno
     }),
 
-    ServeStaticModule.forRoot({
+    ServeStaticModule.forRoot({                   // Permite cargar el contenido estático del html
       rootPath: join(__dirname, '..', 'public'),
     }),
 
-    MongooseModule.forRoot(process.env.MONGODB),
+    MongooseModule.forRoot(process.env.MONGODB),  // Permite conectarse a una base de datos
 
-    PokemonModule,
+    PokemonModule,                                // Carga el módulo de Pokemon
   ],
   controllers: [],
   providers: [],
