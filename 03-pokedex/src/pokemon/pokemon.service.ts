@@ -50,8 +50,19 @@ export class PokemonService {
     return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    
+    const pokemon = await this.findOne(term); // Utilizamos el método anteriormente creado (findOne) para buscar el pokemon por su id, name o no
+    if (updatePokemonDto.name) {
+      updatePokemonDto.name = updatePokemonDto.name.toLowerCase(); // Convertimos el nombre del dto a minúsculas
+    }
+    try {
+      await pokemon.updateOne(updatePokemonDto, { new: true });     // Actualizamos el pokemon con el updatePokemonDto
+      return { ...pokemon.toJSON(), ...updatePokemonDto };          // Retornamos el pokemon actualizado
+
+    } catch (error) {
+      this.handleExceptions(error)
+    }
   }
 
   remove(id: number) {
