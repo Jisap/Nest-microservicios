@@ -56,6 +56,7 @@ export class PokemonService {
     if (updatePokemonDto.name) {
       updatePokemonDto.name = updatePokemonDto.name.toLowerCase(); // Convertimos el nombre del dto a minúsculas
     }
+    
     try {
       await pokemon.updateOne(updatePokemonDto, { new: true });     // Actualizamos el pokemon con el updatePokemonDto
       return { ...pokemon.toJSON(), ...updatePokemonDto };          // Retornamos el pokemon actualizado
