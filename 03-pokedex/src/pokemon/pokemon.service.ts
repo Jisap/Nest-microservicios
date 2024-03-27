@@ -56,7 +56,7 @@ export class PokemonService {
     if (updatePokemonDto.name) {
       updatePokemonDto.name = updatePokemonDto.name.toLowerCase(); // Convertimos el nombre del dto a minúsculas
     }
-    
+
     try {
       await pokemon.updateOne(updatePokemonDto, { new: true });     // Actualizamos el pokemon con el updatePokemonDto
       return { ...pokemon.toJSON(), ...updatePokemonDto };          // Retornamos el pokemon actualizado
@@ -66,8 +66,19 @@ export class PokemonService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    // Opcion 1
+    // const pokemon = await this.findOne( id );  // La eliminación se puede hacer por su id, name o no
+    // await pokemon.deleteOne()                  // ya que utilizamos el método anteriormente creado (findOne)
+    // Opcion 2
+    //const result = await this.pokemonModel.findByIdAndDelete( id );    // Nosotros queremos que el id sea de mongo para poder borrar
+    // Opcion 3
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });    // Borramos el registro que cumpla las condiciones del id
+    if (deletedCount === 0) {                                                   // Si no se borro ningun registro, entonces el id no existe  
+      throw new NotFoundException(`The pokemon with id = ${id} was not found`);
+    }
+
+    return { message: `The pokemon with id = ${id} was deleted` };
   }
 
   private handleExceptions(error: any) {
