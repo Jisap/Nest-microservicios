@@ -5,6 +5,7 @@ import { join } from 'path';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { EnvConfiguration } from './config/app.config';
 import { ConfigModule } from '@nestjs/config';
+import { CommonModule } from './common/common.module';
 
 
 @Module({
@@ -20,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
 
     MongooseModule.forRoot(process.env.MONGODB),  // Permite conectarse a una base de datos
 
-    PokemonModule,                                // Carga el módulo de Pokemon
+    PokemonModule, CommonModule,                  // Carga el módulo de Pokemon y el commonModule
   ],
   controllers: [],
   providers: [],
