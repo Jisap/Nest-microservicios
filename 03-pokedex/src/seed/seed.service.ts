@@ -21,20 +21,22 @@ export class SeedService {
 
     await this.pokemonModel.deleteMany({});
 
-    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=10')
+    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=650')
 
-    const insertPromisesArray = [];
-    
+    // const insertPromisesArray = [];
+    const pokemonToInsert: { name: string, no: number }[] = [];
+
     data.results.forEach(async({ name, url }) => {
       const segments = url.split('/');                  // [ 'https:', '', 'pokeapi.co', 'api', 'v2', 'pokemon', '643', '' ] array de 8, 
       const no = +segments[segments.length - 2]         // id en la posición 6, hay que apuntar a la posición 8-2  
     
-      insertPromisesArray.push(this.pokemonModel.create({ no, name }))      // Inserción en el array de cada promesa de pokemon
-    
+      //insertPromisesArray.push(this.pokemonModel.create({ no, name }))      // Inserción en el array de cada promesa de pokemon
+      pokemonToInsert.push({ name, no });
     })
 
-    await Promise.all(insertPromisesArray);   // Ejecución de las promesas del array de una sola vez
-    
+    //await Promise.all(insertPromisesArray);                                 // Ejecución de las promesas del array de una sola vez
+    this.pokemonModel.insertMany(pokemonToInsert);
+
     return 'Seed executed successfully';
 
   }
