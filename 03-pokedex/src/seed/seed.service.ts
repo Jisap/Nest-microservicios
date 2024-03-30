@@ -4,6 +4,7 @@ import { PokeResponse } from './interfaces/pokem-response.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import { Model } from 'mongoose';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 
 
 @Injectable()
@@ -14,14 +15,14 @@ export class SeedService {
   constructor(
     @InjectModel(Pokemon.name)                     // InjectModel nos permite injectar el modelo de mongoose 
     private readonly pokemonModel: Model<Pokemon>, // Inyección de dependencias: pokemonModel como modelo de mongoose basado en la entity pokemon
-    //private readonly http: AxiosAdapter,           // Inyección de dependencias: http como adapter de Axios
+    private readonly http: AxiosAdapter,           // Inyección de dependencias: http como adapter de Axios
   ) { }
   
   async executeSeed(){
 
     await this.pokemonModel.deleteMany({});
 
-    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=650')
+    const data  = await this.http.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=650')
 
     // const insertPromisesArray = [];
     const pokemonToInsert: { name: string, no: number }[] = [];
