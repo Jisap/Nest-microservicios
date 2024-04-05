@@ -94,3 +94,4 @@ app.enableCors({
   credentials: true,
 });
 ```
+3. Cambiar rutas con src por "../"
