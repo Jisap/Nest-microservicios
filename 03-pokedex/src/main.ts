@@ -5,6 +5,14 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type,Authorization,X-Requested-With,Accept-Language",
+    optionsSuccessStatus: 204,
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api/v2');      // Ruta ppal de la API
 
   app.useGlobalPipes(                 // Validaciones globales

@@ -56,8 +56,41 @@ docker-compose -f docker-compose.prod.yaml --env-file .env.prod up -d
 
 
 # Notas
-Heroku redeploy sin cambios:
+Vercel deploy
+1. Crear archivo vercel.json
 ```
-git commit --allow-empty -m "Trigger Heroku deployment"
-git push heroku main
+{
+  "version": 2,
+  "buildCommand": "npm start",
+  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Requested-With,Accept-Language",
+        "Access-Control-Allow-Credentials": "true"
+      },
+      "dest": "src/main.ts",
+      "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"]
+    }
+  ]
+}
+```
+2. Habilitar cors en main.ts
+```
+app.enableCors({
+  origin: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type,Authorization,X-Requested-With,Accept-Language",
+  optionsSuccessStatus: 204,
+  credentials: true,
+});
 ```
