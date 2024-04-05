@@ -57,7 +57,7 @@ docker-compose -f docker-compose.prod.yaml --env-file .env.prod up -d
 
 # Notas
 Vercel deploy
-1. Crear archivo vercel.json
+1. Crear archivo ```vercel.json```
 ```
 {
   "version": 2,
@@ -84,7 +84,7 @@ Vercel deploy
   ]
 }
 ```
-2. Habilitar cors en main.ts
+2. Habilitar cors en ```main.ts```
 ```
 app.enableCors({
   origin: true,
@@ -94,4 +94,4 @@ app.enableCors({
   credentials: true,
 });
 ```
-3. Cambiar rutas con src por "../"
+3. Cambiar rutas con ```src``` por ```"../"```
