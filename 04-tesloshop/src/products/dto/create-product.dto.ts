@@ -9,7 +9,7 @@ export class CreateProductDto {  // Definimos como queremos que se envie la info
   @IsNumber()
   @IsPositive()
   @IsOptional()
-  price: number;
+  price?: number;
 
   @IsString()
   @IsOptional()
