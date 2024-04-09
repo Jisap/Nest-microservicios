@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({ name: 'products' })
 export class Product {
 
   @PrimaryGeneratedColumn('uuid')
@@ -11,14 +11,14 @@ export class Product {
   })
   title: string;
 
-  @Column('numeric', {
+  @Column('float', {
     default: 0
   })
-  price: number
+  price: number;
 
   @Column({
     type: 'text',
-    nullable: true
+    nullable: true // Puede aceptar nulos
   })
   description: string;
 
