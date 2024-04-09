@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api');           // Ruta ppal de la API
+  app.setGlobalPrefix('api');           // Ruta ppal de la API.
   
   app.useGlobalPipes(                   // Validaciones globales
     new ValidationPipe({

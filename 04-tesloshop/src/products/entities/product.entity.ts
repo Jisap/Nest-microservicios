@@ -11,7 +11,7 @@ export class Product {
   })
   title: string;
 
-  @Column('numeric',{
+  @Column('numeric', {
     default: 0
   })
   price: number

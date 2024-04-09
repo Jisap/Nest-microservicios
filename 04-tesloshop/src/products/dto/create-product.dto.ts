@@ -1,6 +1,6 @@
 import { IsArray, IsIn, IsInt, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
 
-export class CreateProductDto { // Definimos como queremos que se envie la información en el dto
+export class CreateProductDto {  // Definimos como queremos que se envie la información en el dto
 
   @IsString()
   @MinLength(1)
