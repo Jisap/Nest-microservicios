@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,8 @@ import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
+
+  private readonly logger = new Logger('ProductService');         // Logger es como un console.log pero con super poderes
 
   constructor(                                                  // En el constructor indicamos que trabajamos con la entidad Product
     @InjectRepository(Product) //Modelo                         // a traves de una inyección de un repositorio. Este repositorio nos permite
@@ -23,8 +25,7 @@ export class ProductsService {
       return product;
 
     } catch (error) {
-      console.log(error)
-      throw new InternalServerErrorException('Ayuda');
+      this.handleDBExceptions(error)
     }
   }
 
@@ -42,5 +43,13 @@ export class ProductsService {
 
   remove(id: number) {
     return `This action removes a #${id} product`;
+  }
+
+  private handleDBExceptions(error: any) {
+    if (error.code === '23505')                                                     // Si el error es por id duplicado
+      throw new BadRequestException(error.detail)                                   // mensaje de error con el detalle 
+
+    this.logger.error(error)                                                        // Si es cualquier otro error
+    throw new InternalServerErrorException('Unexpected error, check server logs')   // mensaje de error en server y en postman
   }
 }
