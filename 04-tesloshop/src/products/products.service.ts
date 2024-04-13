@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
@@ -44,16 +45,36 @@ export class ProductsService {
     }))
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(term: string) {
+
+    let product: Product;                                                      // Inicializamos una variable product
+
+    if (isUUID(term)) {                                                        // Si el term de busqueda es un uuid
+      product = await this.productRepository.findOneBy({ id: term });          // el product = busqueda por el id que nos pasan
+    } else {                                                          //alias  // Pero si es otra cosa,
+      const queryBuilder = this.productRepository.createQueryBuilder('prod');  // Creamos un queryBuilder (sobre la instancia del Producto) que es un método para la creación de consultas SQL
+      product = await queryBuilder                                             // El producto = al rdo de la consulta a traves del queryBuilder
+        .where('UPPER(title) = :title or slug =:slug', {                       // Condiciones: buscamos rdos por title o slugs                  
+          title: term.toUpperCase(),                                           // Siendo ambos = termino de busqueda
+          slug: term.toLowerCase(),                                            // La condicion sería: buscamos por title en mayúsculas en la bd contra el term de busqueda en mayúsculas
+        })                                 // alias
+        //.leftJoinAndSelect('prod.images', 'prodImages')                        // permite la carga de las relaciones sobre la busqueda del createQueryBuilder 
+        .getOne()                                                              // Solo devolveremos un rdo.
+    }
+
+    if (!product) throw new NotFoundException(`Product with ${term} not found`)
+
+    return product
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    const product = await this.findOne(id)
+    await this.productRepository.remove(product)
+    return `Product with id ${id} has been deleted`
   }
 
   private handleDBExceptions(error: any) {
