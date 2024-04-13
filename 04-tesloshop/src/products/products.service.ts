@@ -4,11 +4,12 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class ProductsService {
 
-  private readonly logger = new Logger('ProductService');         // Logger es como un console.log pero con super poderes
+  private readonly logger = new Logger('ProductService');       // Logger es como un console.log pero con super poderes
 
   constructor(                                                  // En el constructor indicamos que trabajamos con la entidad Product
     @InjectRepository(Product) //Modelo                         // a traves de una inyección de un repositorio. Este repositorio nos permite
@@ -29,8 +30,18 @@ export class ProductsService {
     }
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(paginationDto: PaginationDto) {
+
+    const { limit = 10, offset = 0 } = paginationDto; // Desestructuramos limit y offset del paginationDto
+
+    const products = await this.productRepository.find({   // Aplicamos esos params a la busqueda
+      take: limit,                                         // La busqueda tendrá un limit
+      skip: offset,                                        // y empezará desde el offset
+    })
+
+    return products.map(product => ({                     // Mapeamos los products encontrados
+      ...product,                                         // spread de las props de cada producto que se itera
+    }))
   }
 
   findOne(id: number) {
