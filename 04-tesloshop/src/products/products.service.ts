@@ -5,7 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { isUUID } from 'class-validator';
+import { validate as isUUID } from 'uuid';
+
 
 @Injectable()
 export class ProductsService {
