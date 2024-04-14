@@ -33,15 +33,15 @@ export class ProductsService {
 
   async findAll(paginationDto: PaginationDto) {
 
-    const { limit = 10, offset = 0 } = paginationDto; // Desestructuramos limit y offset del paginationDto
+    const { limit = 10, offset = 0 } = paginationDto;      // Desestructuramos limit y offset del paginationDto
 
     const products = await this.productRepository.find({   // Aplicamos esos params a la busqueda
       take: limit,                                         // La busqueda tendrá un limit
       skip: offset,                                        // y empezará desde el offset
     })
 
-    return products.map(product => ({                     // Mapeamos los products encontrados
-      ...product,                                         // spread de las props de cada producto que se itera
+    return products.map(product => ({                      // Mapeamos los products encontrados
+      ...product,                                          // spread de las props de cada producto que se itera
     }))
   }
 
