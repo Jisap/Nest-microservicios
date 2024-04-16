@@ -32,10 +32,10 @@ export class CreateProductDto {  // Definimos como queremos que se envie la info
   @IsIn(['men', 'women', 'kid', 'unisex'])
   gender: string;
 
-  // @IsString({ each: true })
-  // @IsArray()
-  // @IsOptional()
-  // tags: string[]
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  tags: string[]
 
   // @IsString({ each: true })
   // @IsArray()

@@ -40,6 +40,12 @@ export class Product {
   @Column('text')
   gender: string;
 
+  @Column('text', {
+    array: true,
+    default: []
+  })
+  tags: string[]
+
   @BeforeInsert()                                                     // Antes de la inserción en la bd
   checkSlugInsert() {                                                 // Llamamos a este método que verifica que  
     if (!this.slug) {                                                 // sino existe el slug en el body
