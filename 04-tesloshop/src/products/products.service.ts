@@ -55,9 +55,9 @@ export class ProductsService {
     } else {                                                          //alias  // Pero si es otra cosa,
       const queryBuilder = this.productRepository.createQueryBuilder('prod');  // Creamos un queryBuilder (sobre la instancia del Producto) que es un método para la creación de consultas SQL
       product = await queryBuilder                                             // El producto = al rdo de la consulta a traves del queryBuilder
-        .where('UPPER(title) = :title or slug =:slug', {                       // Condiciones: buscamos rdos por title o slugs                  
-          title: term.toUpperCase(),                                           // Siendo ambos = termino de busqueda
-          slug: term.toLowerCase(),                                            // La condicion sería: buscamos por title en mayúsculas en la bd contra el term de busqueda en mayúsculas
+        .where('UPPER(title) =:title or slug =:slug', {                        // Condiciones: buscamos rdos por title en mayúsculas o slugs como vengan                 
+          title: term.toUpperCase(),                                           // Los valores del term se pasan a mayúsculas y se hace la comparacion
+          slug: term.toLowerCase(),                                            // El slug se deja en minúsculas y se compara con el de bd tal como este.
         })                                 // alias
         //.leftJoinAndSelect('prod.images', 'prodImages')                        // permite la carga de las relaciones sobre la busqueda del createQueryBuilder 
         .getOne()                                                              // Solo devolveremos un rdo.
