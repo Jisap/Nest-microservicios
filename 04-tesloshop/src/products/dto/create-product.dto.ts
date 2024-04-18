@@ -37,8 +37,8 @@ export class CreateProductDto {  // Definimos como queremos que se envie la info
   @IsOptional()
   tags: string[]
 
-  // @IsString({ each: true })
-  // @IsArray()
-  // @IsOptional()
-  // images?: string[]
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  images?: string[]
 }

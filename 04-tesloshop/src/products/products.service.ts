@@ -6,26 +6,36 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
+import { ProductImage } from './entities';
 
 
 @Injectable()
 export class ProductsService {
 
-  private readonly logger = new Logger('ProductService');       // Logger es como un console.log pero con super poderes
+  private readonly logger = new Logger('ProductService');                 // Logger es como un console.log pero con super poderes
 
-  constructor(                                                  // En el constructor indicamos que trabajamos con la entidad Product
-    @InjectRepository(Product) //Modelo                         // a traves de una inyección de un repositorio. Este repositorio nos permite
-    private readonly productRepository: Repository<Product>,    // trabajar (CRUD) con las instancias de las entidades de Product (productRepository)
+  constructor(                                                            // En el constructor indicamos que trabajamos con la entidad Product
+    @InjectRepository(Product) //Modelo                                   // a traves de una inyección de un repositorio. Este repositorio nos permite
+    private readonly productRepository: Repository<Product>,              // trabajar (CRUD) con las instancias de las entidades de Product (productRepository)
                     // Instancias de pto
+
+    @InjectRepository(ProductImage)                                       // Inyección del modelo ProductImage
+    private readonly productImageRepository: Repository<ProductImage>, 
   ){}
   
   async create(createProductDto: CreateProductDto) {
+
+    const { images = [], ...productDetails } = createProductDto           // Del contenido del dto desestructuramos images[] y resto de props
+
     try {
 
-      const product = this.productRepository.create(createProductDto);
+      const product = this.productRepository.create({                     // Creamos la instancia del producto con el contenido del dto
+        ...productDetails,                                                
+        images: images.map(image => this.productImageRepository.create({ url: image })), // donde la imagenes son instancias de productImage
+      });
       await this.productRepository.save(product);
 
-      return product;
+      return { ...product, images: images };
 
     } catch (error) {
       this.handleDBExceptions(error)
@@ -72,7 +82,8 @@ export class ProductsService {
   
     const product = await this.productRepository.preload({                          // Buscamos un producto por el id y sustituimos su contenido 
       id: id,                                                                       // Preload prepara para la actualización pero no actualiza
-      ...updateProductDto
+      ...updateProductDto,
+      images: [],
     });
 
     if (!product) throw new NotFoundException(`Product with id: ${id} not found`); 
