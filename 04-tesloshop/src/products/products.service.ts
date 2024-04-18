@@ -49,10 +49,14 @@ export class ProductsService {
     const products = await this.productRepository.find({   // Aplicamos esos params a la busqueda
       take: limit,                                         // La busqueda tendrá un limit
       skip: offset,                                        // y empezará desde el offset
+      relations: {
+        images: true
+      }
     })
 
     return products.map(product => ({                      // Mapeamos los products encontrados
       ...product,                                          // spread de las props de cada producto que se itera
+      images: product.images.map(img => img.url)           // y de las imagenes solo nos quedamos con la url
     }))
   }
 
