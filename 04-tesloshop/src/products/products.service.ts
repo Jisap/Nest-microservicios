@@ -66,20 +66,29 @@ export class ProductsService {
 
     if (isUUID(term)) {                                                        // Si el term de busqueda es un uuid
       product = await this.productRepository.findOneBy({ id: term });          // el product = busqueda por el id que nos pasan
-    } else {                                                          //alias  // Pero si es otra cosa,
+    } else {                                     //alias para el queryBuilder  // Pero si es otra cosa,
       const queryBuilder = this.productRepository.createQueryBuilder('prod');  // Creamos un queryBuilder (sobre la instancia del Producto) que es un método para la creación de consultas SQL
       product = await queryBuilder                                             // El producto = al rdo de la consulta a traves del queryBuilder
         .where('UPPER(title) =:title or slug =:slug', {                        // Condiciones: buscamos rdos por title en mayúsculas o slugs como vengan                 
           title: term.toUpperCase(),                                           // Los valores del term se pasan a mayúsculas y se hace la comparacion
           slug: term.toLowerCase(),                                            // El slug se deja en minúsculas y se compara con el de bd tal como este.
-        })                                 // alias
-        //.leftJoinAndSelect('prod.images', 'prodImages')                        // permite la carga de las relaciones sobre la busqueda del createQueryBuilder 
+        })                                                                     // prod.images: relacion product con images  // prodImages: alias tabla imagenes
+        .leftJoinAndSelect('prod.images', 'prodImages')                        // permite la carga de las relaciones sobre la busqueda del createQueryBuilder 
         .getOne()                                                              // Solo devolveremos un rdo.
     }
 
     if (!product) throw new NotFoundException(`Product with ${term} not found`)
 
     return product
+  }
+
+  //Aplanamiento de las url de las imagenes
+  async findOnePlain(term: string) {
+    const { images = [], ...rest } = await this.findOne(term);  // Obtenemos un pto según un término de busqueda usando findOne ( método anterior )
+    return {
+      ...rest,                                                  // retornamos las props del pto
+      images: images.map(image => image.url)                    // y de las imagenes solo las url
+    }                                                           // Este método se usará en el controller
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
