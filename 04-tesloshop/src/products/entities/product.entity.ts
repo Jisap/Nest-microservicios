@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductImage } from "./product-image.entity";
 
 @Entity({ name: 'products' })
 export class Product {
@@ -44,7 +45,16 @@ export class Product {
     array: true,
     default: []
   })
-  tags: string[]
+  tags: string[];
+
+  // Relación
+  // Un pto puede tener muchas imagenes
+  @OneToMany(
+    () => ProductImage,                                               // Entidad con la que se relaciona Product
+    (productImage) => productImage.product,                           // Criterio de relación: Cada instancia de ProductImage tiene una propiedad product
+    { cascade: true, eager: true }                                    // eager permite cargar las relaciones cuando se usa find*()
+  )
+  images?: ProductImage[]
 
   @BeforeInsert()                                                     // Antes de la inserción en la bd
   checkSlugInsert() {                                                 // Llamamos a este método que verifica que  
