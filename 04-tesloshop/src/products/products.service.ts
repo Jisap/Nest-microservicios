@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
@@ -21,6 +21,9 @@ export class ProductsService {
 
     @InjectRepository(ProductImage)                                       // Inyección del modelo ProductImage
     private readonly productImageRepository: Repository<ProductImage>, 
+  
+    private readonly dataSource: DataSource,                              // DataSource mantiene la configuración de conexión de la base de datos 
+                                                                          // y establece la conexión inicial de la base de datos
   ){}
   
   async create(createProductDto: CreateProductDto) {
@@ -84,29 +87,46 @@ export class ProductsService {
 
   //Aplanamiento de las url de las imagenes
   async findOnePlain(term: string) {
-    const { images = [], ...rest } = await this.findOne(term);  // Obtenemos un pto según un término de busqueda usando findOne ( método anterior )
+    const { images = [], ...rest } = await this.findOne(term);                  // Obtenemos un pto según un término de busqueda usando findOne ( método anterior )
     return {
-      ...rest,                                                  // retornamos las props del pto
-      images: images.map(image => image.url)                    // y de las imagenes solo las url
-    }                                                           // Este método se usará en el controller
+      ...rest,                                                                  // retornamos las props del pto
+      images: images.map(image => image.url)                                    // y de las imagenes solo las url
+    }                                                                           // Este método se usará en el controller
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+
+    const { images, ...toUpdate } = updateProductDto;
   
     const product = await this.productRepository.preload({                          // Buscamos un producto por el id y sustituimos su contenido 
-      id: id,                                                                       // Preload prepara para la actualización pero no actualiza
-      ...updateProductDto,
-      images: [],
+      id,                                                                           // con el de la nueva instancia, imagenes aparte.
+      ...toUpdate,
     });
 
     if (!product) throw new NotFoundException(`Product with id: ${id} not found`); 
 
+    //Create query runner                                                           // Crea un ejecutor de consultas utilizado para realizar consultas en una sola conexión
+    const queryRunner = this.dataSource.createQueryRunner();                        // de base de datos.
+    await queryRunner.connect();                                                    // Nos conectamos a la bd.
+    await queryRunner.startTransaction();                                           // Iniciamos la transacción
+
     try {
-      
-      await this.productRepository.save(product)
-      return product
+
+      if (images) {                       //entity          //target                // Si la actualización trae imagenes
+        await queryRunner.manager.delete(ProductImage, { product: { id } })         // borramos la imagenes existentes del pto que queremos actualizar
+        product.images = images.map(
+          image => this.productImageRepository.create({ url: image }))              // Creamos instancias de productImage con las nuevas url en el pto a actualizar
+      }
+
+      //product.user = user                                                         // Añadimos el usuario que realizó la actualización al pto
+      await queryRunner.manager.save(product);                                      // Guardamos en queryRunner los cambios realizados en el producto
+      await queryRunner.commitTransaction();                                        // Ejecutamos el commit de la transacción guardada en el queryRunner
+      await queryRunner.release();                                                  // Finalizamos el queryRunner
+      return this.findOnePlain(id);
 
     } catch (error) {
+      await queryRunner.rollbackTransaction();                                      // Si hay algún error el queryRunner deja todo como estaba.
+      await queryRunner.release();
       this.handleDBExceptions(error)
     }
   }
