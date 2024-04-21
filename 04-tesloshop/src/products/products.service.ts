@@ -144,4 +144,17 @@ export class ProductsService {
     this.logger.error(error)                                                        // Si es cualquier otro error
     throw new InternalServerErrorException('Unexpected error, check server logs')   // mensaje de error en server y en postman
   }
+
+
+  async deleteAllProducts() {
+    const query = this.productRepository.createQueryBuilder('product');             // Creamos un queryBuilder para trabajar sobre las instancias de product
+    try {
+      return await query
+        .delete()                                                                   // La acción será borrar
+        .where({})                                                                  // todo el contenido
+        .execute()
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
+  }
 }
