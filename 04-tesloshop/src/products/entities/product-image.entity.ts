@@ -17,7 +17,7 @@ export class ProductImage {
   @ManyToOne(
     () => Product,                          // Entidad con la que se relaciona ProductImage
     (product) => product.images,            // Criterio de relación: Cada instancia de ProductImage tiene una propiedad product
-    { onDelete: 'CASCADE' }
+    { onDelete: 'CASCADE' }                 // Cuando el producto se elimina también se borran las imagenes relacionadas
   )
   product: Product
 
