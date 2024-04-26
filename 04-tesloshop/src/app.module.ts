@@ -9,8 +9,8 @@ import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
+    ConfigModule.forRoot(),                                 // Nos permite cargar las variables de entorno desde un ConfigModule
+    TypeOrmModule.forRoot({                                 // Un ORM nos ayuda en la extracción de código complejo SQL,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,

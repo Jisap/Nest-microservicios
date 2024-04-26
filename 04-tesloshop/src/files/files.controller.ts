@@ -1,15 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, BadRequestException, Res } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileFilter, fileNamer } from './helpers';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 
 
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService                    // Variables de entorno
+  ) {}
+
+  @Get('product/:imageName')                                         // Función para obtener la imagen de un pto desde el nombre (uuid)
+  findProductImage(                                                  // Para ello usa esta función que utiliza
+    @Res() res: Response,                                            // @Res rompe el control de nest con la respuesta para hacerla manual nosotros mismos
+    @Param('imageName') imageName: string                            // y @Params para obtener de los params de la url la 'imageName' (uuid)
+  ) {
+
+    const path = this.filesService.getStaticProductImage(imageName); // con ese imageName y usando una función del filesService se obtiene el path
+
+    return res.sendFile(path);                                       // Devolvemos el archivo según ese path  
+  }
 
   @Post('product')                                                    // Petición post a api/files/product para subida de un archivo
   @UseInterceptors(FileInterceptor('file', {                          // Interceptamos la petición de subida de archivos para modificar la respuesta sobre el archivo 'file'
@@ -27,9 +43,23 @@ export class FilesController {
       throw new BadRequestException('Make sure that the file is an image')    // mensaje de error
     }
 
-    return {
-      filename: file.originalname
+    //console.log({ file });
+    // file: {
+    //   fieldname: 'file',
+    //    originalname: 'careto-prueba.jpg',
+    //    encoding: '7bit',
+    //    mimetype: 'image/jpeg',
+    //    destination: './static/products',
+    //    filename: '8c548ee6-1f3e-46bd-9a60-f8548e29ed14.jpeg',
+    //    path: 'static\\products\\8c548ee6-1f3e-46bd-9a60-f8548e29ed14.jpeg',
+    //    size: 46329
+    // }
 
-    }
+    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename} }`; 
+  
+    return {
+      secureUrl
+    } 
   }
+
 }
