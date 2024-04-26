@@ -5,7 +5,7 @@ export const fileNamer = (req: Request, file: Express.Multer.File, callback: Fun
 
   if (!file) return callback(new Error('File is empty'), false); // Si no hay archivo el cb devuelve un error y un false como no aceptada la operación en el controller
 
-  const fileExtension = file.mimetype.split('/')[1];
+  const fileExtension = file.mimetype.split('/')[1];  // mimetype: 'image/jpeg'
 
   const fileName = `${uuid()}.${fileExtension}`
 
