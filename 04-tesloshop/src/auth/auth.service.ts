@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -16,16 +16,20 @@ export class AuthService {
   async create(createUserDto: CreateUserDto) {
 
     try {
-      
-      const user = this.userRepository.create(createUserDto);
+      const { password, ...userData } = createUserDto;          // Extraemos del dto la password
+      const user = this.userRepository.create({
+        ...userData,                                            // El dto se compondrá de los datos del usuario
+        password: bcrypt.hashSync(password, 10)
+      });
       await this.userRepository.save( user );
-      return user;
+      delete user.password;
+      return {
+        ...user
+      }
 
     } catch (error) {
       this.handleDBErrors(error)
     }
-
-    return 'This action adds a new auth';
   }
 
   private handleDBErrors(error: any): never {
