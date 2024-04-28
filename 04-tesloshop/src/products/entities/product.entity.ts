@@ -1,5 +1,6 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductImage } from "./product-image.entity";
+import { User } from "src/auth/entities/user.entity";
 
 @Entity({ name: 'products' })
 export class Product {
@@ -55,6 +56,15 @@ export class Product {
     { cascade: true, eager: true }                                    // eager permite cargar las relaciones cuando se usa find*()
   )
   images?: ProductImage[]
+
+  // Relación
+  // Muchos productos serán creados por un único usuario ( ManyToOne )
+  @ManyToOne(
+    () => User,                                                        // Cada campo user devolvera un único usuario
+    (user) => user.product,                                            // Ese usuario pertenecerá a un producto.    
+    { eager: true }
+  )
+  user: User
 
   @BeforeInsert()                                                     // Antes de la inserción en la bd
   checkSlugInsert() {                                                 // Llamamos a este método que verifica que  
