@@ -55,10 +55,9 @@ export class FilesController {
     //    size: 46329
     // }
 
-    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename} }`; 
-  
-    return {
-      secureUrl
+    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename} }`; // Obtenida la metadata del file construimos la secureUrl que servirá 
+    return {                                                                                    // para la bd del pto. Esta dirección es un endpoint para nuestro server  
+      secureUrl                                                                                 // y usará el @Get('product/:imageName') de arriba  
     } 
   }
 

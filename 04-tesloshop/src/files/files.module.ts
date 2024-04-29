@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [FilesController],
   providers: [FilesService],
   imports: [
-    ConfigModule
+    ConfigModule  // Importamos este módulo para cargar la envs desde el configService
   ]
 })
 export class FilesModule {}
