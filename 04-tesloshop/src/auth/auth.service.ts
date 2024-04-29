@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,25 @@ export class AuthService {
     }
   }
 
+  async login(loginUserDto: LoginUserDto) {
+
+    const { password, email } = loginUserDto;                                   // email y pass del dto
+    const user = await this.userRepository.findOne({                            // Buscamos el user en las instancias de usuarios en bd
+      where: { email },                                                         // la condición es que el email debe ser el que se proporciono en el dto
+      select: { email: true, password: true, id: true }                         // y mostramos el email y password y el id ( por defecto pass e id no se mostraba )
+    });
+
+    if (!user)                                                                  // Si el usuario no existe en bd
+      throw new UnauthorizedException('Credentials are not valid (email)')      // mensaje de error
+
+    if (!bcrypt.compareSync(password, user.password))                           // Si el usuario si existe pero la pass no coincide con la de la bd
+      throw new UnauthorizedException('Credentials are not valid (password)')   // mensaje de error
+
+    return {
+      ...user
+    }
+  }
+
   private handleDBErrors(error: any): never {
 
     if (error.code === '23505')
@@ -41,4 +61,6 @@ export class AuthService {
 
     throw new InternalServerErrorException('PLease check server logs')
   }
+
+  
 }
