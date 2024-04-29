@@ -5,27 +5,31 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtPayload } from './interface/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-    @InjectRepository(User)                                 // El módulo AuthService trabaja con instancias del modelo User
-    private readonly userRepository: Repository<User>       // Las instancias son los userRepository basadas en la entity User
+    @InjectRepository(User)                                  // El módulo AuthService trabaja con instancias del modelo User
+    private readonly userRepository: Repository<User>,       // Las instancias son los userRepository basadas en la entity User
+    private readonly jwtService: JwtService                  // Servicio de @nestjs/jwt que proviene asu vez de AuthModule
   ){}
 
   async create(createUserDto: CreateUserDto) {
 
     try {
       const { password, ...userData } = createUserDto;          // Extraemos del dto la password
-      const user = this.userRepository.create({
+      const user = this.userRepository.create({                 // Creamos un usuario en una instancia del modelo con el contenido del dto
         ...userData,                                            // El dto se compondrá de los datos del usuario
-        password: bcrypt.hashSync(password, 10)
+        password: bcrypt.hashSync(password, 10)                 // y de la password encryptada
       });
-      await this.userRepository.save( user );
-      delete user.password;
+      await this.userRepository.save(user);                     // Cuando se haya creado lo grabamos en bd
+      delete user.password;                                     // De la respuesta al frontend borramos la password
       return {
-        ...user
+        ...user,                                                // retornamos el resto de datos.
+        token: this.getJwtToken({ id: user.id })                // con el token basado en el id del usuario
       }
 
     } catch (error) {
@@ -48,8 +52,14 @@ export class AuthService {
       throw new UnauthorizedException('Credentials are not valid (password)')   // mensaje de error
 
     return {
-      ...user
+      ...user,
+      token: this.getJwtToken({ id: user.id })
     }
+  }
+
+  private getJwtToken(payload: JwtPayload) {                  // Función para la generación de un Jwt
+    const token = this.jwtService.sign(payload);              // jwtService proviene de @nest/jwt y este de AuthModule que contiene el secret y la expiración 
+    return token;
   }
 
   private handleDBErrors(error: any): never {

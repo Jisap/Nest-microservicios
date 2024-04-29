@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   imports: [
 
     ConfigModule,                                         // Importamos las variables de entorno
@@ -34,6 +35,7 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule,                                        // Si alguien utiliza el authModule usará la configuración del import correspondiente
     PassportModule,
     JwtModule,
+    JwtStrategy,
   ]
 })
 export class AuthModule {}
