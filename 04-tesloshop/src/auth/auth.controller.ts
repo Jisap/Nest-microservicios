@@ -3,8 +3,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
-import { GetUser } from './decorators';
-
+import { GetUser, RawHeaders } from './decorators';
 
 
 
@@ -25,14 +24,18 @@ export class AuthController {
   @Get('private')
   @UseGuards(AuthGuard())                       // Aquí se usa el validate de JWTStrategy -> jwt -> id del user y comprueba que exista en bd 
   testingPrivateRoute(
-    @Req() request: Express.Request,            // La info del token se pasa a la request que será usada por los decoradores siguientes.
+    @Req() request: Express.Request,            // La info del token se pasa a la request que será usada por los decoradores siguientes.(no necesario poner)
     @GetUser() user: User,                      // Usamos un decorador personalizado para obtener el usuario desde la request
+    @GetUser('email') userEmail: string,        // Ejemplo de uso del decorador para obtener la prop 'email
+    @RawHeaders() rawHeaders: string[],         // Ejemplo de uso de un decorador personalizado que obtiene los rawHeaders de la solicitud
   ){
 
     return {
       ok: true,
       message: 'hola mundo private',
-      user
+      user,
+      userEmail,
+      rawHeaders
     }
   }
 }
