@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from './entities/user.entity';
+import { GetUser } from './decorators';
 
 
 
@@ -21,13 +23,16 @@ export class AuthController {
   }
 
   @Get('private')
-  @UseGuards(AuthGuard())                             // Determinan si una solicitud dada será manejada por el controlador de ruta o no, dependiendo de las condiciones del jwtStrategy
-                                                      // jwtStrategy determina si el payload de esta ruta se corresponde con un usuario de la bd registrado
-  testingPrivateRoute(){
+  @UseGuards(AuthGuard())                       // Aquí se usa el validate de JWTStrategy -> jwt -> id del user y comprueba que exista en bd 
+  testingPrivateRoute(
+    @Req() request: Express.Request,            // La info del token se pasa a la request que será usada por los decoradores siguientes.
+    @GetUser() user: User,                      // Usamos un decorador personalizado para obtener el usuario desde la request
+  ){
 
     return {
       ok: true,
-      message: 'hola mundo private'
+      message: 'hola mundo private',
+      user
     }
   }
 }

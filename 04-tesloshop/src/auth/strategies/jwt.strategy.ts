@@ -16,8 +16,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) { // Clase que recib
     configService: ConfigService                                            // Usamos las variables de entorno 
   ) {
     super({                                                                 // Necesitamos establecer las variables de la clase padre (PassportStrategy)
-      secretOrKey: configService.get('JWT_SECRET'),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+      secretOrKey: configService.get('JWT_SECRET'),                         // secret del JWT
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()              // JWT incluido en la solicitud
     })
   }
 
