@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { GetUser, RawHeaders } from './decorators';
+import { IncomingHttpHeaders } from 'http';
 
 
 
@@ -28,6 +29,7 @@ export class AuthController {
     @GetUser() user: User,                      // Usamos un decorador personalizado para obtener el usuario desde la request
     @GetUser('email') userEmail: string,        // Ejemplo de uso del decorador para obtener la prop 'email
     @RawHeaders() rawHeaders: string[],         // Ejemplo de uso de un decorador personalizado que obtiene los rawHeaders de la solicitud
+    @Headers() headers: IncomingHttpHeaders,    // Ejemplo de uso de decorador propio de Nest que hace lo mismo que el anterior
   ){
 
     return {
@@ -35,7 +37,8 @@ export class AuthController {
       message: 'hola mundo private',
       user,
       userEmail,
-      rawHeaders
+      rawHeaders,
+      headers
     }
   }
 }
