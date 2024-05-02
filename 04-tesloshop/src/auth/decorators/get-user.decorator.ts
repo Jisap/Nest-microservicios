@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext, InternalServerErrorException } 
 
 
 
-export const GetUser = createParamDecorator(         // createParamDecorator define un nuevo decorador llamado Getuser para obtener info del usuario  de la solicitud http
+export const GetUser = createParamDecorator(         // createParamDecorator define un nuevo decorador llamado Getuser para obtener info del usuario de la solicitud http
   (data: string, ctx: ExecutionContext) => {         // La función que define el decorador toma dos parametros: 
                                                      // data->expecifica que prop del usuario queremos obtener y ctx->contiene info sobre la solicitud
 
