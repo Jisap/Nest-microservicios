@@ -44,14 +44,11 @@ export class AuthController {
   }
 
   @Get('private2')
-  @SetMetadata('roles', ['admin', 'super-user']) // Establecemos en la metadata los roles válidos para esta ruta
+  @SetMetadata('roles', ['admin', 'super-user']) // Establecemos en la metadata los roles válidos para esta ruta (poco recomendable)
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute2(
     @GetUser() user:User
   ){
-
-
-
     return {
       ok: true,
       user,
