@@ -3,11 +3,12 @@ import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
-import { GetUser, RawHeaders } from './decorators';
+import { Auth, GetUser, RawHeaders } from './decorators';
 import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
 import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interface/valid-roles';
+
 
 
 
@@ -48,7 +49,7 @@ export class AuthController {
   @Get('private2')
   //@SetMetadata('roles', ['admin', 'super-user'])            // Establecemos en la metadata los roles válidos para esta ruta (poco recomendable)
   @RoleProtected(ValidRoles.superUser, ValidRoles.admin)      // Usamos en cambio un decorador personalizado que los establece atraves de una constante
-  @UseGuards(AuthGuard(), UserRoleGuard)
+  @UseGuards(AuthGuard(), UserRoleGuard)                      // El resto igual: validate de JWTStrategy + comprobación del rol que tiene el user
   privateRoute2(
     @GetUser() user:User
   ){
@@ -58,5 +59,15 @@ export class AuthController {
     }
   }
 
- 
+
+  @Get('private3')
+  @Auth(ValidRoles.admin)
+  privateRoute3(
+    @GetUser() user: User
+  ) {
+    return {
+      ok: true,
+      user,
+    }
+  }
 }
