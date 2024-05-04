@@ -60,9 +60,9 @@ export class Product {
   // Relación
   // Muchos productos serán creados por un único usuario ( ManyToOne )
   @ManyToOne(
-    () => User,                                                        // Cada campo user devolvera un único usuario
+    () => User,                                                        // Product apunta (se relaciona con) a la tabla de User
     (user) => user.product,                                            // Ese usuario pertenecerá a un producto.    
-    { eager: true }
+    { eager: true }                                                    // Eager carga automáticamente la relación 
   )
   user: User
 

@@ -34,7 +34,7 @@ export class User {
   // Relación
   // Un usuario puede crear muchos productos OneToMany
   @OneToMany(
-    () => Product,                                              // Cada campo product devolverá un Product[]
+    () => Product,                                              // User apunta (se relaciona con) la tabla de product
     (product) => product.user                                   // y cada elemento de Product[] pertenecerá a un usuario   
   )
   product: Product
