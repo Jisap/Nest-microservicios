@@ -7,6 +7,7 @@ import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 import { ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 
 @Injectable()
@@ -26,7 +27,7 @@ export class ProductsService {
                                                                           // y establece la conexión inicial de la base de datos
   ){}
   
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
 
     const { images = [], ...productDetails } = createProductDto           // Del contenido del dto desestructuramos images[] y resto de props
 
@@ -35,6 +36,7 @@ export class ProductsService {
       const product = this.productRepository.create({                     // Creamos la instancia del producto con el contenido del dto
         ...productDetails,                                                
         images: images.map(image => this.productImageRepository.create({ url: image })), // donde la imagenes son instancias de productImage
+        user
       });
       await this.productRepository.save(product);
 
@@ -94,7 +96,7 @@ export class ProductsService {
     }                                                                           // Este método se usará en el controller
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
 
     const { images, ...toUpdate } = updateProductDto;
   
@@ -118,7 +120,7 @@ export class ProductsService {
           image => this.productImageRepository.create({ url: image }))              // Creamos instancias de productImage con las nuevas url en el pto a actualizar
       }
 
-      //product.user = user                                                         // Añadimos el usuario que realizó la actualización al pto
+      product.user = user                                                           // Añadimos el usuario que realizó la actualización al pto
       await queryRunner.manager.save(product);                                      // Guardamos en queryRunner los cambios realizados en el producto
       await queryRunner.commitTransaction();                                        // Ejecutamos el commit de la transacción guardada en el queryRunner
       await queryRunner.release();                                                  // Finalizamos el queryRunner
