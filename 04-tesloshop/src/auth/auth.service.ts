@@ -57,6 +57,13 @@ export class AuthService {
     }
   }
 
+  async checkAuthStatus(user: User) {
+    return {
+      ...user,                                                 // Spread del user
+      token: this.getJwtToken({ id: user.id })                 // generamos un nuevo token basado en el id del usuario
+    }
+  }
+
   private getJwtToken(payload: JwtPayload) {                  // Función para la generación de un Jwt
     const token = this.jwtService.sign(payload);              // jwtService proviene de @nest/jwt y este de AuthModule que contiene el secret y la expiración 
     return token;

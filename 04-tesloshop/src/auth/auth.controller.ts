@@ -26,6 +26,14 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @Get('check-status')                                         // Ruta para renovar la validez/duración del token 
+  @Auth()                                                      // 1º Validamos el token contra el usuario de la bd
+  checkAuthStatus(                                             // 2º Renovamos validez del token con esta función que llama a un servicio 
+    @GetUser() user: User                                      // Este servicio necesitará el usuario del token contenido en la petición ( request )
+  ) {
+    return this.authService.checkAuthStatus(user)            // Se lo enviamos al servicio
+  }
+
   @Get('private')
   @UseGuards(AuthGuard())                       // Aquí se usa el validate de JWTStrategy -> jwt -> id del user y comprueba que exista en bd 
   testingPrivateRoute(
