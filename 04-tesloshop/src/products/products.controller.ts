@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -7,6 +8,7 @@ import { Auth, GetUser } from '../auth/decorators';
 import { ValidRoles } from 'src/auth/interface/valid-roles';
 import { User } from 'src/auth/entities/user.entity';
 
+@ApiTags('Products')                                                // Permite agrupar los endpoints por products en swagger
 @Controller('products')
 export class ProductsController {
 
