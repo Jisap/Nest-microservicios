@@ -1,47 +1,86 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductImage } from "./product-image.entity";
 import { User } from "src/auth/entities/user.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity({ name: 'products' })
 export class Product {
 
+  @ApiProperty({
+    example: '801bd6f6-6650-4f14-9011-31bdfc7d16be',
+    description: 'Product ID',
+    uniqueItems: true
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({
+    example: 'T-Shirt Teslo',
+    description: 'Product Title',
+    uniqueItems: true
+  })
   @Column('text', {
     unique: true,
   })
   title: string;
 
+  @ApiProperty({
+    example: 0,
+    description: 'Product price',
+  })
   @Column('float', {
     default: 0
   })
   price: number;
 
+  @ApiProperty({
+    example: 'lorem ipsum Anim reprehenderit nulla in anim mollit irure commodo.',
+    description: 'Product description',
+    default: null,
+  })
   @Column({
     type: 'text',
     nullable: true // Puede aceptar nulos
   })
   description: string;
 
+  @ApiProperty({
+    example: 'T_Shirt_Teslo',
+    description: 'Product SLUG - for SEO',
+    uniqueItems: true
+  })
   @Column('text', {
     unique: true
   })
   slug: string;
 
+  @ApiProperty({
+    example: 10,
+    description: 'Product stock',
+    default: 0
+  })
   @Column('int',{
     default: 0
   })
   stock: number;
 
+  @ApiProperty({
+    example: ['M', 'XL', 'XXL'],
+    description: 'Product sizes',
+  })
   @Column('text', {
     array: true
   })
   sizes: string[]
 
+  @ApiProperty({
+    example: 'women',
+    description: 'Product gender',
+  })
   @Column('text')
   gender: string;
 
+  @ApiProperty()
   @Column('text', {
     array: true,
     default: []
@@ -50,6 +89,7 @@ export class Product {
 
   // Relación
   // Un pto puede tener muchas imagenes
+  @ApiProperty()
   @OneToMany(
     () => ProductImage,                                               // Entidad con la que se relaciona Product
     (productImage) => productImage.product,                           // Criterio de relación: Cada instancia de ProductImage tiene una propiedad product
