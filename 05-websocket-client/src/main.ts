@@ -1,13 +1,18 @@
 import { connectToServer } from './socket-client'
 import './style.css'
 
-//import { setupCounter } from './counter.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-   <h1>Websocket - Client</h1>
-   <span>offline</span>
+    <h1>Websocket - Client</h1>
+   
+    <span id='server-status'>offline</span>
+
+    <ul id="clients-ul">
+      <li>asdfsfsf</li>
+    </ul>
+
   </div>
 `
 connectToServer()
-//setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+
