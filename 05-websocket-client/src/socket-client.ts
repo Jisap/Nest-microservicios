@@ -5,16 +5,16 @@ let socket: Socket                                                              
 export const connectToServer = ( token: string ) => {
 
   const manager = new Manager('http://localhost:3000/socket.io/socket.io.js', {   // Conexión al servidor
-    extraHeaders:{
-      authentication: token
+    extraHeaders:{                                                                // con extraHeaders
+      authentication: token                                                       // que contienen el toke de autenticación
     }
   }); 
-  socket = manager.socket('/');                                                   // Se obtienen los sockets (canales de información)
-  socket?.removeAllListeners()
-  addListeners( socket );                                                         // Se envía los sockets a la fn que escucha eventos -> modifica html   
+  socket = manager.socket('/');                                                   // Se obtienen el socket (canal de información) que este abierto.
+  socket?.removeAllListeners()                                                    // Se borran los antiguos.
+  addListeners();                                                                 // Se llama a la fn que escucha eventos del socket.
 }
 
-const addListeners = (socket:Socket) => {
+const addListeners = () => {                                                      // Escucha eventos del socket por referencia global
 
   const serverStatusLabel = document.querySelector('#server-status')!;
   const clientsUl = document.querySelector("#clients-ul")!;
@@ -24,16 +24,16 @@ const addListeners = (socket:Socket) => {
 
   const messageUl = document.querySelector<HTMLUListElement>('#messages-ul')!;
 
-  socket.on('connect', () => {                                                  // Escuchamos el evento de conexión
-    serverStatusLabel.innerHTML = 'connected'                                   // Si se produce cambiamos la etiqueta de span  
+  socket.on('connect', () => {                                                    // Escuchamos el evento de conexión
+    serverStatusLabel.innerHTML = 'connected'                                     // Si se produce cambiamos la etiqueta de span  
   });
 
   socket.on('disconnect', () => {
     serverStatusLabel.innerHTML = 'connected'
   });
 
-  socket.on('clients-updated', (clients: string[]) => {                         // Escuchamos el evento de cliente agregado/borrado al [ConnectedClients]
-    let clientsHtml = ''                                                        // y modificamos el html
+  socket.on('clients-updated', (clients: string[]) => {                           // Escuchamos el evento de cliente agregado/borrado al [ConnectedClients]
+    let clientsHtml = ''                                                          // y modificamos el html
     clients.forEach( clientId => {  
       clientsHtml += `
         <li>${clientId}</li>                                  
