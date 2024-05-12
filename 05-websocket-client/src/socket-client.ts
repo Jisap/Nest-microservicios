@@ -1,5 +1,7 @@
 import { Manager, Socket } from 'socket.io-client'
 
+let socket: Socket                                                                // Socket definido globalmente
+
 export const connectToServer = ( token: string ) => {
 
   const manager = new Manager('http://localhost:3000/socket.io/socket.io.js', {   // Conexión al servidor
@@ -7,7 +9,8 @@ export const connectToServer = ( token: string ) => {
       authentication: token
     }
   }); 
-  const socket = manager.socket('/');                                             // Se obtienen los sockets (canales de información)
+  socket = manager.socket('/');                                                   // Se obtienen los sockets (canales de información)
+  socket?.removeAllListeners()
   addListeners( socket );                                                         // Se envía los sockets a la fn que escucha eventos -> modifica html   
 }
 
@@ -43,7 +46,7 @@ const addListeners = (socket:Socket) => {
     event.preventDefault();
     if(messageInput.value.trim().length <= 0) return
 
-    socket.emit('message-from-client', { id: 'yo', message: messageInput.value }); // y lo emitimos a todo el mundo.
+    socket.emit('message-from-client', { id: 'yo', message: messageInput.value }); // y lo emitimos a todo el mundo -> MessagesWsGateway -> emit('message-from-server') -> socket.on('message-from-server') -> modifica el html
 
     messageInput.value = '';
   });
