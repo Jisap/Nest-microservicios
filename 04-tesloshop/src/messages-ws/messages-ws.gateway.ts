@@ -12,8 +12,10 @@ export class MessagesWsGateway implements OnGatewayConnection, OnGatewayDisconne
     private readonly messagesWsService: MessagesWsService
   ) {}
 
-  handleConnection( client: Socket ) {
-    this.messagesWsService.registerClient(client);                                  // Detectado el client se guarda en [ConnectedClients]
+  handleConnection( client: Socket ) {                                              // Detecta el client
+    const token = client.handshake.headers.authentication as string;                // Recuperamos el token desde los extraheaders del mismo 
+    console.log(token) 
+    this.messagesWsService.registerClient(client);                                  // Se guarda el client en [ConnectedClients]
     this.wss.emit('clients-updated', this.messagesWsService.getConnectedClients())  // Emitimos a todos los clientes ese []string con las ids de los clientes conectados
     
   }

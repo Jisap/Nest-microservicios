@@ -1,10 +1,14 @@
 import { Manager, Socket } from 'socket.io-client'
 
-export const connectToServer = () => {
+export const connectToServer = ( token: string ) => {
 
-  const manager = new Manager('http://localhost:3000/socket.io/socket.io.js'); // Conexión al servidor
-  const socket = manager.socket('/');                                          // Se obtienen los sockets (canales de información)
-  addListeners( socket );                                                      // Se envía los sockets a la fn que escucha eventos -> modifica html   
+  const manager = new Manager('http://localhost:3000/socket.io/socket.io.js', {   // Conexión al servidor
+    extraHeaders:{
+      authentication: token
+    }
+  }); 
+  const socket = manager.socket('/');                                             // Se obtienen los sockets (canales de información)
+  addListeners( socket );                                                         // Se envía los sockets a la fn que escucha eventos -> modifica html   
 }
 
 const addListeners = (socket:Socket) => {
